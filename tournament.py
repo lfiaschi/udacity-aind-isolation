@@ -23,7 +23,7 @@ from sample_players import (RandomPlayer, open_move_score,
 from game_agent import (MinimaxPlayer, AlphaBetaPlayer, custom_score,
                         custom_score_2, custom_score_3)
 
-NUM_MATCHES = 5  # number of matches against each opponent
+NUM_MATCHES = 15  # number of matches against each opponent
 TIME_LIMIT = 150  # number of milliseconds before timeout
 
 DESCRIPTION = """
@@ -59,6 +59,7 @@ def play_round(cpu_agent, test_agents, win_counts, num_matches):
                 game.apply_move(move)
 
         # play all games and tally the results
+
         for game in games:
             winner, _, termination = game.play(time_limit=TIME_LIMIT)
             win_counts[winner] += 1
@@ -130,20 +131,21 @@ def main():
     # starting position against the same adversaries in the tournament
     test_agents = [
         Agent(AlphaBetaPlayer(score_fn=improved_score), "AB_Improved"),
-        Agent(AlphaBetaPlayer(score_fn=custom_score), "AB_Custom"),
-        Agent(AlphaBetaPlayer(score_fn=custom_score_2), "AB_Custom_2"),
-        Agent(AlphaBetaPlayer(score_fn=custom_score_3), "AB_Custom_3")
+        Agent(AlphaBetaPlayer(score_fn=custom_score), "AB_Aggressive"),
+        Agent(AlphaBetaPlayer(score_fn=custom_score_2), "AB_Manhattan"),
+        Agent(AlphaBetaPlayer(score_fn=custom_score_3), "AB_Follow")
     ]
 
     # Define a collection of agents to compete against the test agents
     cpu_agents = [
-        Agent(RandomPlayer(), "Random"),
+        # Agent(RandomPlayer(), "Random"),
         Agent(MinimaxPlayer(score_fn=open_move_score), "MM_Open"),
         Agent(MinimaxPlayer(score_fn=center_score), "MM_Center"),
         Agent(MinimaxPlayer(score_fn=improved_score), "MM_Improved"),
         Agent(AlphaBetaPlayer(score_fn=open_move_score), "AB_Open"),
         Agent(AlphaBetaPlayer(score_fn=center_score), "AB_Center"),
-        Agent(AlphaBetaPlayer(score_fn=improved_score), "AB_Improved")
+        Agent(AlphaBetaPlayer(score_fn=improved_score), "AB_Improved"),
+        Agent(RandomPlayer(), "Random")
     ]
 
     print(DESCRIPTION)

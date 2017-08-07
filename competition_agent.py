@@ -33,7 +33,10 @@ def custom_score(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
-    raise NotImplementedError
+
+    # Implement number of my moves
+
+    return len(game.get_legal_moves(player))
 
 
 class CustomPlayer:
