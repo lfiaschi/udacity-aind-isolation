@@ -4,6 +4,9 @@ and include the results in your report.
 """
 import random
 import numpy as np
+from math import sqrt
+
+from sample_players import improved_score, center_score
 
 class SearchTimeout(Exception):
     """Subclass base exception for code clarity. """
@@ -34,13 +37,10 @@ def custom_score(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
-    # Implement number of my moves
-    # Aggressive Player
+    # Implement number of my moves - opponent moves plus a centrality term that
+    # tries to keep the player at the centre of the board
 
-    my_moves = float(len(game.get_legal_moves(player)))
-    opponent_moves = float(len(game.get_legal_moves(game.get_opponent(player))))
-
-    return my_moves - 3.0 * opponent_moves + game.utility(player)
+    return improved_score(game, player) + center_score(game, player)
 
 
 
@@ -66,7 +66,8 @@ def custom_score_2(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
-    # My moves - Opponent moves * run towards the opponenet
+
+    # (My moves - 2 Opponent moves) * run towards the opponent ; aggressive player
 
     position_of_player = game.get_player_location(player)
     position_of_opponent = game.get_player_location(game.get_opponent(player))
@@ -102,18 +103,18 @@ def custom_score_3(game, player):
         The heuristic value of the current game state to the specified player.
     """
 
-    # Run away from the opponent
-
+    # Run away from the opponent (defensive player) keeps as far away as possible
+    # while maintaining the number of moves available high
 
     position_of_player = game.get_player_location(player)
     position_of_opponent = game.get_player_location(game.get_opponent(player))
     manhattan_distance = abs(position_of_player[0] - position_of_opponent[0]) + abs(
         position_of_player[1] - position_of_opponent[1])
 
-    # my_moves = float(len(game.get_legal_moves(player)))
+    my_moves = float(len(game.get_legal_moves(player)))
     # opponent_moves = float(len(game.get_legal_moves(game.get_opponent(player))))
 
-    return manhattan_distance + game.utility(player)
+    return my_moves + manhattan_distance + game.utility(player)
 
 
 class IsolationPlayer:
