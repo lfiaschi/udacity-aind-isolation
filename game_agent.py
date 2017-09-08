@@ -6,7 +6,69 @@ import random
 import numpy as np
 from math import sqrt
 
-from sample_players import improved_score, center_score
+def improved_score(game, player):
+    """The "Improved" evaluation function discussed in lecture that outputs a
+    score equal to the difference in the number of moves available to the
+    two players.
+
+    Parameters
+    ----------
+    game : `isolation.Board`
+        An instance of `isolation.Board` encoding the current state of the
+        game (e.g., player locations and blocked cells).
+
+    player : hashable
+        One of the objects registered by the game object as a valid player.
+        (i.e., `player` should be either game.__player_1__ or
+        game.__player_2__).
+
+    Returns
+    ----------
+    float
+        The heuristic value of the current game state
+    """
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
+
+    own_moves = len(game.get_legal_moves(player))
+    opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    return float(own_moves - opp_moves)
+
+
+def center_score(game, player):
+    """Outputs a score equal to square of the distance from the center of the
+    board to the position of the player.
+
+    This heuristic is only used by the autograder for testing.
+
+    Parameters
+    ----------
+    game : `isolation.Board`
+        An instance of `isolation.Board` encoding the current state of the
+        game (e.g., player locations and blocked cells).
+
+    player : hashable
+        One of the objects registered by the game object as a valid player.
+        (i.e., `player` should be either game.__player_1__ or
+        game.__player_2__).
+
+    Returns
+    ----------
+    float
+        The heuristic value of the current game state
+    """
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
+
+    w, h = game.width / 2., game.height / 2.
+    y, x = game.get_player_location(player)
+    return float((h - y)**2 + (w - x)**2)
 
 class SearchTimeout(Exception):
     """Subclass base exception for code clarity. """
@@ -37,11 +99,19 @@ def custom_score(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
+
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
+
     # Implement number of my moves - opponent moves plus a centrality term that
     # tries to keep the player at the centre of the board
+    is_ = improved_score(game, player)
+    cs = center_score(game, player)/4. #scaling factor included
 
-    return improved_score(game, player) + center_score(game, player)
-
+    return is_ + cs
 
 
 def custom_score_2(game, player):
@@ -66,6 +136,12 @@ def custom_score_2(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
+
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
 
     # (My moves - 2 Opponent moves) * run towards the opponent ; aggressive player
 
@@ -102,6 +178,12 @@ def custom_score_3(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
+
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
 
     # Run away from the opponent (defensive player) keeps as far away as possible
     # while maintaining the number of moves available high
